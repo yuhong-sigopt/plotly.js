@@ -181,6 +181,7 @@
     "open": "^8.2.1",
     "pixelmatch": "^5.2.1",
     "prepend-file": "^2.0.0",
+    "prettier": "^2.3.2",
     "prettysize": "^2.0.0",
     "read-last-lines": "^1.8.0",
     "run-series": "^1.1.9",

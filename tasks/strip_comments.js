@@ -2,6 +2,7 @@ var path = require('path');
 var fs = require('fs');
 var glob = require('glob');
 var stripComments = require('strip-comments');
+var prettier = require('prettier');
 
 var constants = require('./util/constants');
 
@@ -28,7 +29,9 @@ function removeCommentsFromUnminifiedBundles() {
                     preserveNewlines: true
                 });
 
-                fs.writeFileSync(fileOut, strOut);
+                fs.writeFileSync(fileOut,
+                    prettier.format(strOut, { semi: true, parser: 'babel' })
+                );
             }
         });
     });
