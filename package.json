@@ -32,8 +32,9 @@
     "use-draftlogs": "node tasks/use_draftlogs.js",
     "empty-draftlogs": "node tasks/empty_draftlogs.js",
     "empty-dist": "node tasks/empty_dist.js",
-    "build": "npm run empty-dist && npm run preprocess && npm run find-strings && npm run bundle && npm run extra-bundles basic && npm run extra-bundles cartesian && npm run extra-bundles geo && npm run extra-bundles gl2d && npm run extra-bundles gl3d && npm run extra-bundles mapbox && npm run extra-bundles finance && npm run extra-bundles strict && npm run locales && npm run schema dist && npm run stats",
+    "build": "npm run empty-dist && npm run preprocess && npm run find-strings && npm run bundle && npm run extra-bundles basic && npm run extra-bundles cartesian && npm run extra-bundles geo && npm run extra-bundles gl2d && npm run extra-bundles gl3d && npm run extra-bundles mapbox && npm run extra-bundles finance && npm run extra-bundles strict && npm run locales && npm run schema dist && npm run strip-comments && npm run stats",
     "cibuild": "npm run empty-dist && npm run preprocess && node tasks/cibundle.js",
+    "strip-comments": "node tasks/strip_comments.js",
     "watch": "node tasks/watch.js",
     "lint": "eslint --version && eslint .",
     "lint-fix": "eslint . --fix || true",
@@ -185,6 +186,7 @@
     "run-series": "^1.1.9",
     "sane-topojson": "^4.0.0",
     "sass": "^1.35.2",
+    "strip-comments": "^2.0.1",
     "through2": "^4.0.2",
     "true-case-path": "^2.2.1",
     "watchify": "^4.0.0"
