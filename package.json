@@ -167,6 +167,7 @@
     "npm-link-check": "^4.0.0",
     "open": "^7.3.0",
     "prepend-file": "^2.0.0",
+    "prettier": "^2.2.1",
     "prettysize": "^2.0.0",
     "read-last-lines": "^1.7.2",
     "requirejs": "^2.3.6",
