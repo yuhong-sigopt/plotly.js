@@ -19,15 +19,18 @@ jobs:
           command: |
             export NODE_OPTIONS='--max-old-space-size=4096'
       - run:
+          name: Install npm v7
+          command: sudo npm install npm@7.10.0 --global
+      - run:
           name: Install dependencies
           command: |
             npm ci
       - run:
           name: List dependency versions
           command: |
+            npm ls --all || true
             echo "npm: $(npm --version)"
             echo "node: $(node --version)"
-            npm ls || true
       - run:
           name: Pretest
           command: |
