@@ -22,7 +22,7 @@ function makeCredentialsFile() {
 function makeTestImageFolders() {
     function makeOne(folderPath, info) {
         if(!common.doesDirExist(folderPath)) {
-            fs.mkdirSync(folderPath);
+            fs.mkdirSync(folderPath, {recursive: true});
             logger('initialize ' + info);
         } else logger(info + ' is present');
     }
