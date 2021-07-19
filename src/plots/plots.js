@@ -1320,15 +1320,17 @@ plots.supplyTraceDefaults = function(traceIn, traceOut, colorIndex, layout, trac
                 'showlegend'
             );
 
-            coerce('legendgroup');
-            var titleText = coerce('legendgrouptitle.text');
-            if(titleText) {
-                Lib.coerceFont(coerce, 'legendgrouptitle.font', Lib.extendFlat({}, layout.font, {
-                    size: Math.round(layout.font.size * 1.1) // default to larger font size
-                }));
-            }
+            if(traceOut.traceorder === 'grouped') {
+                coerce('legendgroup');
+                var titleText = coerce('legendgrouptitle.text');
+                if(titleText) {
+                    Lib.coerceFont(coerce, 'legendgrouptitle.font', Lib.extendFlat({}, layout.font, {
+                        size: Math.round(layout.font.size * 1.1) // default to larger font size
+                    }));
+                }
 
-            coerce('legendrank');
+                coerce('legendrank');
+            }
 
             traceOut._dfltShowLegend = true;
         } else {
