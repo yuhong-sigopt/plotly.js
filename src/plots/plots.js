@@ -1320,7 +1320,7 @@ plots.supplyTraceDefaults = function(traceIn, traceOut, colorIndex, layout, trac
                 'showlegend'
             );
 
-            coerce('legendgroup');
+            var legendgroup = coerce('legendgroup');
             var titleText = coerce('legendgrouptitle.text');
             if(titleText) {
                 Lib.coerceFont(coerce, 'legendgrouptitle.font', Lib.extendFlat({}, layout.font, {
@@ -1328,7 +1328,14 @@ plots.supplyTraceDefaults = function(traceIn, traceOut, colorIndex, layout, trac
                 }));
             }
 
-            coerce('legendrank');
+            var legendrank = coerce('legendrank');
+
+            if(legendrank || legendgroup || titleText && (
+                layout.legend.traceorder === 'normal'
+            )) {
+                // Override to 'grouped' now the trace has legendrank, legendgroup or legendgrouptitle
+                layout.legend.traceorder = 'grouped';
+            }
 
             traceOut._dfltShowLegend = true;
         } else {

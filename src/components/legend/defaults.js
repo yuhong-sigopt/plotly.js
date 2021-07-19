@@ -102,8 +102,9 @@ module.exports = function legendDefaults(layoutIn, layoutOut, fullData) {
         defaultYAnchor = 'auto';
     }
 
-    coerce('traceorder', defaultOrder);
-    if(helpers.isGrouped(layoutOut.legend)) coerce('tracegroupgap');
+
+    coerce('traceorder', defaultOrder); // This may be overridden to 'grouped' if any trace has legendrank, legendgroup or legendgrouptitle
+    coerce('tracegroupgap');
 
     coerce('itemsizing');
     coerce('itemwidth');
