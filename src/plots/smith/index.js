@@ -3,7 +3,7 @@
 var getSubplotCalcData = require('../get_data').getSubplotCalcData;
 var counterRegex = require('../../lib').counterRegex;
 
-var createPolar = require('./polar');
+var createSmith = require('./smith');
 var constants = require('./constants');
 
 var attr = constants.attr;
@@ -17,9 +17,9 @@ attributes[attr] = {
     editType: 'calc',
     description: [
         'Sets a reference between this trace\'s data coordinates and',
-        'a polar subplot.',
-        'If *polar* (the default value), the data refer to `layout.polar`.',
-        'If *polar2*, the data refer to `layout.polar2`, and so on.'
+        'a smith subplot.',
+        'If *smith* (the default value), the data refer to `layout.smith`.',
+        'If *smith2*, the data refer to `layout.smith2`, and so on.'
     ].join(' ')
 };
 
@@ -34,7 +34,7 @@ function plot(gd) {
         var subplot = fullLayout[id]._subplot;
 
         if(!subplot) {
-            subplot = createPolar(gd, id);
+            subplot = createSmith(gd, id);
             fullLayout[id]._subplot = subplot;
         }
 
@@ -44,9 +44,6 @@ function plot(gd) {
 
 function clean(newFullData, newFullLayout, oldFullData, oldFullLayout) {
     var oldIds = oldFullLayout._subplots[name] || [];
-    var hadGl = (oldFullLayout._has && oldFullLayout._has('gl'));
-    var hasGl = (newFullLayout._has && newFullLayout._has('gl'));
-    var mustCleanScene = hadGl && !hasGl;
 
     for(var i = 0; i < oldIds.length; i++) {
         var id = oldIds[i];
@@ -59,11 +56,6 @@ function clean(newFullData, newFullLayout, oldFullData, oldFullLayout) {
             for(var k in oldSubplot.clipPaths) {
                 oldSubplot.clipPaths[k].remove();
             }
-        }
-
-        if(mustCleanScene && oldSubplot._scene) {
-            oldSubplot._scene.destroy();
-            oldSubplot._scene = null;
         }
     }
 }
