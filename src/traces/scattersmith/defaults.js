@@ -6,7 +6,7 @@ var subTypes = require('../scatter/subtypes');
 var handleMarkerDefaults = require('../scatter/marker_defaults');
 var handleLineDefaults = require('../scatter/line_defaults');
 var handleLineShapeDefaults = require('../scatter/line_shape_defaults');
-// var handleTextDefaults = require('../scatter/text_defaults');
+var handleTextDefaults = require('../scatter/text_defaults');
 var handleFillColorDefaults = require('../scatter/fillcolor_defaults');
 var PTS_LINESONLY = require('../scatter/constants').PTS_LINESONLY;
 
@@ -17,12 +17,13 @@ function supplyDefaults(traceIn, traceOut, defaultColor, layout) {
         return Lib.coerce(traceIn, traceOut, attributes, attr, dflt);
     }
 
-    var len = handleReImDefaults(traceIn, traceOut, layout, coerce);
+    var len = handleRThetaDefaults(traceIn, traceOut, layout, coerce);
     if(!len) {
         traceOut.visible = false;
         return;
     }
 
+    coerce('thetaunit');
     coerce('mode', len < PTS_LINESONLY ? 'lines+markers' : 'lines');
     coerce('text');
     coerce('hovertext');
@@ -38,10 +39,10 @@ function supplyDefaults(traceIn, traceOut, defaultColor, layout) {
         handleMarkerDefaults(traceIn, traceOut, defaultColor, layout, coerce, {gradient: true});
     }
 
-    // if(subTypes.hasText(traceOut)) {
-    //     coerce('texttemplate');
-    //     handleTextDefaults(traceIn, traceOut, layout, coerce);
-    // }
+    if(subTypes.hasText(traceOut)) {
+        coerce('texttemplate');
+        handleTextDefaults(traceIn, traceOut, layout, coerce);
+    }
 
     var dfltHoverOn = [];
 
@@ -66,13 +67,24 @@ function supplyDefaults(traceIn, traceOut, defaultColor, layout) {
     Lib.coerceSelectionMarkerOpacity(traceOut, coerce);
 }
 
-function handleReImDefaults(traceIn, traceOut, layout, coerce) {
-    var re = coerce('re');
-    var im = coerce('im');
-    var len = 0;
+function handleRThetaDefaults(traceIn, traceOut, layout, coerce) {
+    var r = coerce('r');
+    var theta = coerce('theta');
+    var len;
 
-    if(re && im) {
-        len = Math.min(re.length, im.length);
+    if(r) {
+        if(theta) {
+            len = Math.min(r.length, theta.length);
+        } else {
+            len = r.length;
+            coerce('theta0');
+            coerce('dtheta');
+        }
+    } else {
+        if(!theta) return 0;
+        len = traceOut.theta.length;
+        coerce('r0');
+        coerce('dr');
     }
 
     traceOut._length = len;
@@ -80,5 +92,6 @@ function handleReImDefaults(traceIn, traceOut, layout, coerce) {
 }
 
 module.exports = {
+    handleRThetaDefaults: handleRThetaDefaults,
     supplyDefaults: supplyDefaults
 };

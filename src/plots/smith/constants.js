@@ -2,14 +2,15 @@
 
 module.exports = {
     attr: 'subplot',
-    name: 'smith',
+    name: 'polar',
 
-    axisNames: ['imaginaryaxis', 'realaxis'],
-    axisName2dataArray: {imaginaryaxis: 'theta', realaxis: 'r'},
+    axisNames: ['angularaxis', 'radialaxis'],
+    axisName2dataArray: {angularaxis: 'theta', radialaxis: 'r'},
 
     layerNames: [
         'draglayer',
         'plotbg',
+        'backplot',
         'angular-grid',
         'radial-grid',
         'frontplot',

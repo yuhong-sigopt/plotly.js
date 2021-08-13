@@ -2,9 +2,9 @@
 
 module.exports = {
     moduleType: 'trace',
-    name: 'scattersmith',
-    basePlotModule: require('../../plots/smith'),
-    categories: ['symbols', 'showLegend', 'scatter-like'],
+    name: 'scatterpolar',
+    basePlotModule: require('../../plots/polar'),
+    categories: ['polar', 'symbols', 'showLegend', 'scatter-like'],
 
     attributes: require('./attributes'),
     supplyDefaults: require('./defaults').supplyDefaults,
@@ -18,12 +18,12 @@ module.exports = {
     selectPoints: require('../scatter/select'),
 
     meta: {
-        hrName: 'scatter_smith',
+        hrName: 'scatter_polar',
         description: [
-            'The scattersmith trace type encompasses line charts, scatter charts, text charts, and bubble charts',
-            'in smith chart coordinates.',
+            'The scatterpolar trace type encompasses line charts, scatter charts, text charts, and bubble charts',
+            'in polar coordinates.',
             'The data visualized as scatter point or lines is set in',
-            '`re` (real) and `im` (imaginary) coordinates',
+            '`r` (radial) and `theta` (angular) coordinates',
             'Text (appearing either on the chart or on hover only) is via `text`.',
             'Bubble charts are achieved by setting `marker.size` and/or `marker.color`',
             'to numerical arrays.'

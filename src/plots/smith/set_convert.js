@@ -7,12 +7,12 @@ var deg2rad = Lib.deg2rad;
 var rad2deg = Lib.rad2deg;
 
 /**
- * setConvert for smith axes!
+ * setConvert for polar axes!
  *
  * @param {object} ax
  *   axis in question (works for both radial and angular axes)
- * @param {object} smithLayout
- *   full smith layout of the subplot associated with 'ax'
+ * @param {object} polarLayout
+ *   full polar layout of the subplot associated with 'ax'
  * @param {object} fullLayout
  *   full layout
  *
@@ -26,7 +26,7 @@ var rad2deg = Lib.rad2deg;
  *
  * Radial axis coordinate systems:
  * - d, c and l: same as for cartesian axes
- * - g: like calcdata but translated about `realaxis.range[0]` & `smith.hole`
+ * - g: like calcdata but translated about `radialaxis.range[0]` & `polar.hole`
  *
  * Angular axis coordinate systems:
  * - d: data, in whatever form it's provided
@@ -38,54 +38,22 @@ var rad2deg = Lib.rad2deg;
  *
  * Then, 'g'eometric data is ready to be converted to (x,y).
  */
-module.exports = function setConvert(ax, smithLayout, fullLayout) {
+module.exports = function setConvert(ax, polarLayout, fullLayout) {
     setConvertCartesian(ax, fullLayout);
 
     switch(ax._id) {
         case 'x':
-        case 'realaxis':
-            setConvertRadial(ax, smithLayout);
+        case 'radialaxis':
+            setConvertRadial(ax, polarLayout);
             break;
-        case 'imaginaryaxis':
-            setConvertAngular(ax, smithLayout);
-            break;
-        case 'realaxis2':
-            setConvertReal(ax, smithLayout);
+        case 'angularaxis':
+            setConvertAngular(ax, polarLayout);
             break;
     }
 };
 
-function setConvertReal(ax, smithLayout) {
-    var subplot = smithLayout._subplot;
-    var radius = subplot.radius;
-
-    ax.setGeometry = function() {
-        ax.c2g = function(v) {
-            var sq = function(x) { return x * x; };
-            var gammaX = function(re) {
-                var denom = sq(re + 1.0);
-                var result = (sq(re) - 1.0) / denom;
-                return result;
-            };
-        // console.log(v, gammaX(v));
-
-            return gammaX(v);
-        };
-
-        ax.g2c = function(v) {
-            return (v + 1.0) / (1.0 - v);
-        };
-
-        ax.g2p = function(v) {
-            return v * radius;
-        };
-
-        ax.c2p = function(v) { return ax.g2p(ax.c2g(v)); };
-    };
-}
-
-function setConvertRadial(ax, smithLayout) {
-    var subplot = smithLayout._subplot;
+function setConvertRadial(ax, polarLayout) {
+    var subplot = polarLayout._subplot;
 
     ax.setGeometry = function() {
         var rl0 = ax._rl[0];
@@ -121,7 +89,7 @@ function fromRadians(v, unit) {
     return unit === 'degrees' ? rad2deg(v) : v;
 }
 
-function setConvertAngular(ax, smithLayout) {
+function setConvertAngular(ax, polarLayout) {
     var axType = ax.type;
 
     if(axType === 'linear') {
@@ -170,7 +138,7 @@ function setConvertAngular(ax, smithLayout) {
 
     // N.B. we mock the axis 'range' here
     ax.setGeometry = function() {
-        var sector = smithLayout.sector;
+        var sector = polarLayout.sector;
         var sectorInRad = sector.map(deg2rad);
         var dir = {clockwise: -1, counterclockwise: 1}[ax.direction];
         var rot = deg2rad(ax.rotation);
@@ -192,6 +160,19 @@ function setConvertAngular(ax, smithLayout) {
                 ax.range = Lib.isFullCircle(sectorInRad) ?
                     [sector[0], sector[0] + 360] :
                     sectorInRad.map(g2rad).map(rad2deg);
+                break;
+
+            case 'category':
+                var catLen = ax._categories.length;
+                var _period = ax.period ? Math.max(ax.period, catLen) : catLen;
+
+                // fallback in case all categories have been filtered out
+                if(_period === 0) _period = 1;
+
+                c2rad = t2rad = function(v) { return v * 2 * Math.PI / _period; };
+                rad2c = rad2t = function(v) { return v * _period / Math.PI / 2; };
+
+                ax.range = [0, _period];
                 break;
         }
 

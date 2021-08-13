@@ -7,8 +7,12 @@ var Template = require('../../plot_api/plot_template');
 var handleSubplotDefaults = require('../subplot_defaults');
 var getSubplotData = require('../get_data').getSubplotData;
 
+var handleTickValueDefaults = require('../cartesian/tick_value_defaults');
 var handleTickMarkDefaults = require('../cartesian/tick_mark_defaults');
+var handleTickLabelDefaults = require('../cartesian/tick_label_defaults');
+var handleCategoryOrderDefaults = require('../cartesian/category_order_defaults');
 var handleLineGridDefaults = require('../cartesian/line_grid_defaults');
+var autoType = require('../cartesian/axis_autotype');
 
 var layoutAttributes = require('./layout_attributes');
 var setConvert = require('./set_convert');
@@ -19,7 +23,7 @@ function handleDefaults(contIn, contOut, coerce, opts) {
     var bgColor = coerce('bgcolor');
     opts.bgColor = Color.combine(bgColor, opts.paper_bgcolor);
 
-    coerce('sector');
+    var sector = coerce('sector');
     coerce('hole');
 
     // could optimize, subplotData is not always needed!
@@ -47,6 +51,11 @@ function handleDefaults(contIn, contOut, coerce, opts) {
         var dataAttr = constants.axisName2dataArray[axName];
         var axType = handleAxisTypeDefaults(axIn, axOut, coerceAxis, subplotData, dataAttr, opts);
 
+        handleCategoryOrderDefaults(axIn, axOut, coerceAxis, {
+            axData: subplotData,
+            dataAttr: dataAttr
+        });
+
         var visible = coerceAxis('visible');
         setConvert(axOut, contOut, layoutOut);
 
@@ -64,7 +73,7 @@ function handleDefaults(contIn, contOut, coerce, opts) {
         // as both radial and angular axes don't have a set domain.
         // Furthermore, angular axes don't have a set range.
         //
-        // Mocked domains and ranges are set by the smith subplot instances,
+        // Mocked domains and ranges are set by the polar subplot instances,
         // but Axes.findExtremes uses the sign of _m to determine which padding value
         // to use.
         //
@@ -73,11 +82,19 @@ function handleDefaults(contIn, contOut, coerce, opts) {
         axOut._m = 1;
 
         switch(axName) {
-            case 'realaxis':
-                axIn.autorange = false;
+            case 'radialaxis':
+                var autoRange = coerceAxis('autorange', !axOut.isValidRange(axIn.range));
+                axIn.autorange = autoRange;
+                if(autoRange && (axType === 'linear' || axType === '-')) coerceAxis('rangemode');
+                if(autoRange === 'reversed') axOut._m = -1;
+
+                coerceAxis('range');
                 axOut.cleanRange('range', {dfltRange: [0, 1]});
 
                 if(visible) {
+                    coerceAxis('side');
+                    coerceAxis('angle', sector[0]);
+
                     coerceAxis('title.text');
                     Lib.coerceFont(coerceAxis, 'title.font', {
                         family: opts.font.family,
@@ -87,13 +104,43 @@ function handleDefaults(contIn, contOut, coerce, opts) {
                 }
                 break;
 
-            case 'imaginaryaxis':
+            case 'angularaxis':
+                // We do not support 'true' date angular axes yet,
+                // users can still plot dates on angular axes by setting
+                // `angularaxis.type: 'category'`.
+                //
+                // Here, if a date angular axes is detected, we make
+                // all its corresponding traces invisible, so that
+                // when we do add support for data angular axes, the new
+                // behavior won't conflict with existing behavior
+                if(axType === 'date') {
+                    Lib.log('Polar plots do not support date angular axes yet.');
+
+                    for(var j = 0; j < subplotData.length; j++) {
+                        subplotData[j].visible = false;
+                    }
+
+                    // turn this into a 'dummy' linear axis so that
+                    // the subplot still renders ok
+                    axType = axIn.type = axOut.type = 'linear';
+                }
+
+                if(axType === 'linear') {
+                    coerceAxis('thetaunit');
+                } else {
+                    coerceAxis('period');
+                }
+
                 var direction = coerceAxis('direction');
                 coerceAxis('rotation', {counterclockwise: 0, clockwise: 90}[direction]);
                 break;
         }
 
         if(visible) {
+            handleTickValueDefaults(axIn, axOut, coerceAxis, axOut.type);
+            handleTickLabelDefaults(axIn, axOut, coerceAxis, axOut.type, {
+                tickSuffixDflt: axOut.thetaunit === 'degrees' ? '°' : undefined
+            });
             handleTickMarkDefaults(axIn, axOut, coerceAxis, {outerTicks: true});
 
             var showTickLabels = coerceAxis('showticklabels');
@@ -122,12 +169,48 @@ function handleDefaults(contIn, contOut, coerce, opts) {
             coerceAxis('layer');
         }
 
+        if(axType !== 'category') coerceAxis('hoverformat');
+
         axOut._input = axIn;
+    }
+
+    if(contOut.angularaxis.type === 'category') {
+        coerce('gridshape');
     }
 }
 
-function handleAxisTypeDefaults(axIn, axOut) {
-    axOut.type = 'linear';
+function handleAxisTypeDefaults(axIn, axOut, coerce, subplotData, dataAttr, options) {
+    var autotypenumbers = coerce('autotypenumbers', options.autotypenumbersDflt);
+    var axType = coerce('type');
+
+    if(axType === '-') {
+        var trace;
+
+        for(var i = 0; i < subplotData.length; i++) {
+            if(subplotData[i].visible) {
+                trace = subplotData[i];
+                break;
+            }
+        }
+
+        if(trace && trace[dataAttr]) {
+            axOut.type = autoType(trace[dataAttr], 'gregorian', {
+                noMultiCategory: true,
+                autotypenumbers: autotypenumbers
+            });
+        }
+
+        if(axOut.type === '-') {
+            axOut.type = 'linear';
+        } else {
+            // copy autoType back to input axis
+            // note that if this object didn't exist
+            // in the input layout, we have to put it in
+            // this happens in the main supplyDefaults function
+            axIn.type = axOut.type;
+        }
+    }
+
     return axOut.type;
 }
 

@@ -13,28 +13,28 @@ var calcMarkerSize = require('../scatter/calc').calcMarkerSize;
 module.exports = function calc(gd, trace) {
     var fullLayout = gd._fullLayout;
     var subplotId = trace.subplot;
-    var radialAxis = fullLayout[subplotId].realaxis;
-    var angularAxis = fullLayout[subplotId].imaginaryaxis;
-    var reArray = radialAxis.makeCalcdata(trace, 're');
-    var imArray = angularAxis.makeCalcdata(trace, 'im');
+    var radialAxis = fullLayout[subplotId].radialaxis;
+    var angularAxis = fullLayout[subplotId].angularaxis;
+    var rArray = radialAxis.makeCalcdata(trace, 'r');
+    var thetaArray = angularAxis.makeCalcdata(trace, 'theta');
     var len = trace._length;
     var cd = new Array(len);
 
     for(var i = 0; i < len; i++) {
-        var re = reArray[i];
-        var im = imArray[i];
+        var r = rArray[i];
+        var theta = thetaArray[i];
         var cdi = cd[i] = {};
 
-        if(isNumeric(re) && isNumeric(im)) {
-            cdi.re = re;
-            cdi.im = im;
+        if(isNumeric(r) && isNumeric(theta)) {
+            cdi.r = r;
+            cdi.theta = theta;
         } else {
-            cdi.re = BADNUM;
+            cdi.r = BADNUM;
         }
     }
 
     var ppad = calcMarkerSize(trace, len);
-    trace._extremes.x = Axes.findExtremes(radialAxis, reArray, {ppad: ppad});
+    trace._extremes.x = Axes.findExtremes(radialAxis, rArray, {ppad: ppad});
 
     calcColorscale(gd, trace);
     arraysToCalcdata(cd, trace);
