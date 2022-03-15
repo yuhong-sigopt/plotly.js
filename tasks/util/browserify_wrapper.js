@@ -44,7 +44,9 @@ module.exports = function _bundle(pathToIndex, pathToBundle, opts, cb) {
         browserifyOpts.transform.push(strictD3);
     }
 
-    var b = browserify(pathToIndex, browserifyOpts);
+    var b = browserify(pathToIndex, browserifyOpts)
+        .transform('babelify', { presets: ['@babel/preset-env'] });
+
     var pending = (pathToMinBundle && pathToBundle) ? 2 : 1;
 
     function done() {

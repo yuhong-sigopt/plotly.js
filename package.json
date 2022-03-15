@@ -71,6 +71,11 @@
       "./tasks/compress_attributes.js"
     ]
   },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
   "dependencies": {
     "@plotly/d3": "3.8.0",
     "@plotly/d3-sankey": "0.7.2",
