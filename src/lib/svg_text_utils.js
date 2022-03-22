@@ -456,9 +456,14 @@ exports.plainText = function(_str, opts) {
                 }
 
                 if(len > eLen) {
-                    newParts.push(p.substr(0, pLen2 - eLen) + ellipsis);
+                    var end = pLen2 - eLen;
+                    if(end > 0) {
+                        newParts.push(p.slice(0, pLen2 - eLen) + ellipsis);
+                    } else {
+                        newParts.push(ellipsis);
+                    }
                 } else {
-                    newParts.push(p.substr(0, pLen2));
+                    newParts.push(p.slice(0, pLen2));
                 }
                 break;
             }
