@@ -92,7 +92,7 @@ for(var i = 0; i < allMockList.length; i++) {
         continue;
     }
 
-    var isMapbox = mockName.substr(0, 7) === 'mapbox_';
+    var isMapbox = mockName.slice(0, 7) === 'mapbox_';
     var isOtherFlaky = [
         // list flaky mocks other than mapbox:
         'gl3d_bunny-hull'

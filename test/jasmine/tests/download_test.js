@@ -121,7 +121,7 @@ describe('Plotly.downloadImage', function() {
                 reader.onloadend = function() {
                     var res = reader.result;
 
-                    expect(res.substr(0, expectedStart.length)).toBe(expectedStart);
+                    expect(res.slice(0, expectedStart.length)).toBe(expectedStart);
                     expect(res.match(plotClip)).not.toBe(null);
                     expect(res.match(legendClip)).not.toBe(null);
 
