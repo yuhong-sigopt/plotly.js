@@ -32,7 +32,7 @@ function findLocaleStrings() {
 
         files.forEach(function(file) {
             var code = fs.readFileSync(file, 'utf-8');
-            var filePartialPath = file.substr(constants.pathToSrc.length);
+            var filePartialPath = file.slice(constants.pathToSrc.length);
 
             falafel(code, {locations: true}, function(node) {
                 if(node.type === 'CallExpression' &&

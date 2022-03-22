@@ -15,7 +15,7 @@ if(!argLocale) {
 
         items.forEach(function(item) {
             var itemLocale = item.split('.')[0];
-            if(itemLocale.substr(0, 2) === 'en') {
+            if(itemLocale.slice(0, 2) === 'en') {
                 console.log('skipping English ' + itemLocale);
                 return;
             }
@@ -42,7 +42,7 @@ function pullOneLocale(locale) {
         var startIndex = wcCode.indexOf(startStr, wcCode.indexOf(preStartStr)) + startStr.length - 1;
         var endIndex = wcCode.indexOf(endStr, startIndex) + 1;
 
-        var dataStr = wcCode.substr(startIndex, endIndex - startIndex);
+        var dataStr = wcCode.slice(startIndex, endIndex);
 
         // strip out `main.substitute(Chinese)?Digits` - we don't care about the digits field for now anyway
         dataStr = dataStr.replace(/main[\.][A-Za-z]+\([^\)]*\)/g, '""');
@@ -61,9 +61,9 @@ function pullOneLocale(locale) {
             var outObjEndStr = '};';
             var outObjStartIndex = existingOutputText.indexOf(outObjStartStr) + outObjStartStr.length;
             var outObjEndIndex = existingOutputText.indexOf(outObjEndStr, outObjStartIndex) + 1;
-            var outPrefix = existingOutputText.substr(0, outObjStartIndex);
-            var outSuffix = existingOutputText.substr(outObjEndIndex);
-            var objText = existingOutputText.substr(outObjStartIndex, outObjEndIndex - outObjStartIndex);
+            var outPrefix = existingOutputText.slice(0, outObjStartIndex);
+            var outSuffix = existingOutputText.slice(outObjEndIndex);
+            var objText = existingOutputText.slice(outObjStartIndex, outObjEndIndex);
             var outObj;
             try {
                 outObj = eval('a=' + objText);

@@ -21,7 +21,7 @@ module.exports = function wrapLocale(pathToInput, pathToOutput) {
         var moduleStart = data.indexOf(moduleMarker) + moduleMarker.length;
         var moduleEnd = data.indexOf(';', moduleStart);
 
-        var rawOut = prefix + data.substr(moduleStart, moduleEnd - moduleStart) + suffix;
+        var rawOut = prefix + data.slice(moduleStart, moduleEnd) + suffix;
 
         intoStream(rawOut)
             .pipe(minify({
