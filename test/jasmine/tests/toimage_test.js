@@ -240,7 +240,7 @@ describe('Plotly.toImage', function() {
             var len = clipPath.length;
 
             var head = clipPath.slice(0, 4);
-            var tail = clipPath.substr(len - 7, len);
+            var tail = clipPath.slice(len - 7, len - 7 + len); // Can't we simplify this?
             expect(head).toBe('url(', 'subplot clipPath head');
             expect(tail).toBe('xyplot)', 'subplot clipPath tail');
 
