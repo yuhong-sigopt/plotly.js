@@ -109,7 +109,7 @@ function readFiles(files) {
 function createMocksList(files) {
     // eliminate pollutants (e.g .DS_Store) that can accumulate in the mock directory
     var jsonFiles = files.filter(function(file) {
-        return file.name.substr(-5) === '.json';
+        return file.name.slice(-5) === '.json';
     });
 
     var mocksList = jsonFiles.map(function(file) {
