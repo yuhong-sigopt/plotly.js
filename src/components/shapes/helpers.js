@@ -40,7 +40,7 @@ exports.extractPathCoords = function(path, paramsToUse) {
         var relevantParamIdx = paramsToUse[segment.charAt(0)].drawn;
         if(relevantParamIdx === undefined) return;
 
-        var params = segment.substr(1).match(constants.paramRE);
+        var params = segment.slice(1).match(constants.paramRE);
         if(!params || params.length < relevantParamIdx) return;
 
         extractedCoordinates.push(Lib.cleanNumber(params[relevantParamIdx]));

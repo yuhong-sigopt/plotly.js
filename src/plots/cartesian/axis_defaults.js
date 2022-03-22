@@ -306,6 +306,6 @@ var dayStrToNum = {
 function indexOfDay(v) {
     if(typeof v !== 'string') return;
     return dayStrToNum[
-        v.substr(0, 3).toLowerCase()
+        v.slice(0, 3).toLowerCase()
     ];
 }

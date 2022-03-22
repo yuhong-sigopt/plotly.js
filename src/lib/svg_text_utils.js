@@ -506,8 +506,8 @@ function convertEntities(_str) {
             // cannot use String.fromCodePoint in IE
             outChar = fromCodePoint(
                 innerMatch.charAt(1) === 'x' ?
-                    parseInt(innerMatch.substr(2), 16) :
-                    parseInt(innerMatch.substr(1), 10)
+                    parseInt(innerMatch.slice(2), 16) :
+                    parseInt(innerMatch.slice(1), 10)
             );
         } else outChar = entityToUnicode[innerMatch];
 

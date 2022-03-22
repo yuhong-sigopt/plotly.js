@@ -468,7 +468,7 @@ lib.syncOrAsync = function(sequence, arg, finalStep) {
  * http://stackoverflow.com/questions/6680825/return-string-without-trailing-slash
  */
 lib.stripTrailingSlash = function(str) {
-    if(str.substr(-1) === '/') return str.substr(0, str.length - 1);
+    if(str.slice(-1) === '/') return str.slice(0, str.length - 1);
     return str;
 };
 
@@ -735,7 +735,7 @@ lib.minExtend = function(obj1, obj2) {
 };
 
 lib.titleCase = function(s) {
-    return s.charAt(0).toUpperCase() + s.substr(1);
+    return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 lib.containsAny = function(s, fragments) {

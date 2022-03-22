@@ -98,13 +98,13 @@ color.clean = function(container) {
         key = keys[i];
         val = container[key];
 
-        if(key.substr(key.length - 5) === 'color') {
+        if(key.slice(key.length - 5) === 'color') {
             // only sanitize keys that end in "color" or "colorscale"
 
             if(Array.isArray(val)) {
                 for(j = 0; j < val.length; j++) val[j] = cleanOne(val[j]);
             } else container[key] = cleanOne(val);
-        } else if(key.substr(key.length - 10) === 'colorscale' && Array.isArray(val)) {
+        } else if(key.slice(key.length - 10) === 'colorscale' && Array.isArray(val)) {
             // colorscales have the format [[0, color1], [frac, color2], ... [1, colorN]]
 
             for(j = 0; j < val.length; j++) {
@@ -125,7 +125,7 @@ function cleanOne(val) {
     if(isNumeric(val) || typeof val !== 'string') return val;
 
     var valTrim = val.trim();
-    if(valTrim.substr(0, 3) !== 'rgb') return val;
+    if(valTrim.slice(0, 3) !== 'rgb') return val;
 
     var match = valTrim.match(/^rgba?\s*\(([^()]*)\)$/);
     if(!match) return val;

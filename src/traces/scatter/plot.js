@@ -239,8 +239,8 @@ function plotOne(gd, idx, plotinfo, cdscatter, cdscatterAll, element, transition
                     fullpath = thispath;
                     revpath = thisrevpath;
                 } else if(ownFillDir) {
-                    fullpath += 'L' + thispath.substr(1);
-                    revpath = thisrevpath + ('L' + revpath.substr(1));
+                    fullpath += 'L' + thispath.slice(1);
+                    revpath = thisrevpath + ('L' + revpath.slice(1));
                 } else {
                     fullpath += 'Z' + thispath;
                     revpath = thisrevpath + 'Z' + revpath;
@@ -303,7 +303,7 @@ function plotOne(gd, idx, plotinfo, cdscatter, cdscatterAll, element, transition
                     // For the sake of animations, wrap the points around so that
                     // the points on the axes are the first two points. Otherwise
                     // animations get a little crazy if the number of points changes.
-                    transition(ownFillEl3).attr('d', 'M' + pt1 + 'L' + pt0 + 'L' + fullpath.substr(1))
+                    transition(ownFillEl3).attr('d', 'M' + pt1 + 'L' + pt0 + 'L' + fullpath.slice(1))
                         .call(Drawing.singleFillStyle, gd);
                 } else {
                     // fill to self: just join the path to itself
@@ -312,7 +312,7 @@ function plotOne(gd, idx, plotinfo, cdscatter, cdscatterAll, element, transition
                 }
             }
         } else if(tonext) {
-            if(trace.fill.substr(0, 6) === 'tonext' && fullpath && prevRevpath) {
+            if(trace.fill.slice(0, 6) === 'tonext' && fullpath && prevRevpath) {
                 // fill to next: full trace path, plus the previous path reversed
                 if(trace.fill === 'tonext') {
                     // tonext: for use by concentric shapes, like manually constructed
@@ -327,7 +327,7 @@ function plotOne(gd, idx, plotinfo, cdscatter, cdscatterAll, element, transition
                     // y/x, but if they *aren't*, we should ideally do more complicated
                     // things depending on whether the new endpoint projects onto the
                     // existing curve or off the end of it
-                    transition(tonext).attr('d', fullpath + 'L' + prevRevpath.substr(1) + 'Z')
+                    transition(tonext).attr('d', fullpath + 'L' + prevRevpath.slice(1) + 'Z')
                         .call(Drawing.singleFillStyle, gd);
                 }
                 trace._polygons = trace._polygons.concat(prevPolygons);
