@@ -237,10 +237,10 @@ describe('Plotly.toImage', function() {
             var svgDOM = parser.parseFromString(svg, 'image/svg+xml');
             var gSubplot = svgDOM.getElementsByClassName('plot')[0];
             var clipPath = gSubplot.getAttribute('clip-path');
-            var len = clipPath.length;
 
             var head = clipPath.slice(0, 4);
-            var tail = clipPath.slice(len - 7, len - 7 + len); // Can't we simplify this?
+            var tail = clipPath.slice(-7);
+
             expect(head).toBe('url(', 'subplot clipPath head');
             expect(tail).toBe('xyplot)', 'subplot clipPath tail');
 
