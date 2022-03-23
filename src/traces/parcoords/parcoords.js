@@ -680,6 +680,14 @@ module.exports = function parcoords(gd, cdModule, layout, callbacks) {
             Drawing.font(e, d.model.labelFont);
             svgTextUtils.convertToTspans(e, gd);
         })
+        .each(function(d) {
+            // Ellipsize long labels
+            var maxWidth = d.xScale(1) - 5;
+            while(this.textContent.length > 2 &&
+                  this.getComputedTextLength() > maxWidth) {
+                this.textContent = this.textContent.slice(0, -2) + '…';
+            }
+        })
         .attr('transform', function(d) {
             var tilt = calcTilt(d.model.labelAngle, d.model.labelSide);
             var r = c.axisTitleOffset;
@@ -700,6 +708,11 @@ module.exports = function parcoords(gd, cdModule, layout, callbacks) {
                 return 'middle';
             }
         });
+
+      // Tooltip
+    axisTitle.enter()
+        .append('title')
+        .text(function(d) {return d.label;});
 
     var axisExtent = axisOverlays.selectAll('.' + c.cn.axisExtent)
         .data(repeat, keyFun);
